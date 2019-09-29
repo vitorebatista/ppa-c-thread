@@ -5,6 +5,9 @@ CCFLAGS = -Wall
 LDFLAGS = -fopenmp
 TARGET = 10_mm 10_omp_mm 10_omp_workshare 01_hello 02_forSum 03_forReductionSum 04_private 05_criticalZone 06_scheduler_dynamic 06_scheduler_static
 
+
+all: $(TARGET)
+
 %.o: %.c
 	$(CC) $(CCFLAGS) -c $<
 	echo "export OMP_NUM_THREADS=<nroThread>"
@@ -12,7 +15,6 @@ TARGET = 10_mm 10_omp_mm 10_omp_workshare 01_hello 02_forSum 03_forReductionSum 
 %: %.o
 	$(CC) $(LDFLAGS) $^ -o $@ 
 
-all: $(TARGET)
     
 
 # Dependencias
