@@ -18,7 +18,7 @@ int malocar(mymatriz *matriz)
 {
 	int **newMatrix = NULL;
 
-	printf("\nmalocar =[%d,%d]\n", matriz->lin, matriz->col);
+	//printf("\nmalocar =[%d,%d]\n", matriz->lin, matriz->col);
 	newMatrix = (int **)calloc(matriz->lin, sizeof(int *));
 	//newMatrix = (int **) malloc(matrix->lin * sizeof(int *));
 	if (!newMatrix)
