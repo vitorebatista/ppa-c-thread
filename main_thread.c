@@ -1,5 +1,19 @@
 #include "matriz-operacoes-threads.h"
 
+typedef struct {
+      int tid;
+      int ntasks;
+} param_t;
+
+void *exec_thread (void *arg) {
+  param_t *p = (param_t *) arg;
+
+  sleep(p->ntasks - p->tid);
+  printf ("(exec_thread) %d\n", p->tid);
+  return NULL;
+}
+
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 int main(int argc, char *argv[])
 {
@@ -23,6 +37,7 @@ int main(int argc, char *argv[])
     int count_for = 10;
     double tempo_MATRIZ_SeqC = 0;
     double tempo_MATRIZ_SeqBlC = 0;
+    double MATRIZ_ThreadC = 0;
 
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -156,6 +171,23 @@ LOOP (10x)
 	MARCAR_TEMPO FIM
 	GRAVAR_DISCO MATRIZ_ThreadC
     */
+    for(int count = 0; count < count_for; count++){
+        start_time = wtime();
+        for (int i = 0; i < ntasks; i++)
+        {
+            args[i].tid = i;
+            args[i].ntasks = ntasks;
+            pthread_create(&threads[i], NULL, exec_thread, (void *) (args+i));
+        }
+
+        for (int i = 0; i < ntasks; i++)
+        {
+            pthread_join(threads[i], NULL);
+        }
+        end_time = wtime();
+        MATRIZ_ThreadC += end_time - start_time;
+        printf("\tRuntime : %f\n", end_time - start_time);
+    }
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,6 +217,7 @@ LOOP (10x)
     */
     printf("\tRuntime Médio tempo_MATRIZ_SeqC: %f\n", tempo_MATRIZ_SeqC / count_for);
     printf("\tRuntime Médio tempo_MATRIZ_SeqBlC: %f\n", tempo_MATRIZ_SeqBlC / count_for);
+    printf("\tRuntime Médio MATRIZ_ThreadC: %f\n", MATRIZ_ThreadC / count_for);
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
 
     // LIBERAR MEMÓRIA
