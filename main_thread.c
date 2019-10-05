@@ -1,3 +1,4 @@
+#include <pthread.h>
 #include "matriz-operacoes-threads.h"
 
 typedef struct {
@@ -8,7 +9,7 @@ typedef struct {
 void *exec_thread (void *arg) {
   param_t *p = (param_t *) arg;
 
-  sleep(p->ntasks - p->tid);
+  //sleep(p->ntasks - p->tid);
   printf ("(exec_thread) %d\n", p->tid);
   return NULL;
 }
@@ -20,7 +21,9 @@ int main(int argc, char *argv[])
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
     // DECLARAÇÃO de VARIÁVEIS
     mymatriz mat_a, mat_b;
-    mymatriz **mmultbloco, **mmult;
+    mymatriz **mmult_MATRIZ_SeqC;
+    mymatriz **mmult_MATRIZ_SeqBlC;
+
     char filename[100];
     FILE *fmat;
     int nr_line;
@@ -34,10 +37,15 @@ int main(int argc, char *argv[])
     int nro_submatrizes = 2;
 
     //For para executar calculo da média
+    int ntasks = 2;
     int count_for = 10;
+    param_t *args;
+    pthread_t *threads;
+
     double tempo_MATRIZ_SeqC = 0;
     double tempo_MATRIZ_SeqBlC = 0;
     double MATRIZ_ThreadC = 0;
+    double MATRIZ_ThreadBlC = 0;
 
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -110,9 +118,9 @@ int main(int argc, char *argv[])
         // free(mmult[0]);
         // free(mmult);
         // free(mmultbloco);
-        mmult = (mymatriz **) malloc (sizeof(mymatriz *));
+        mmult_MATRIZ_SeqC = (mymatriz **) malloc (sizeof(mymatriz *));
         start_time = wtime();
-        mmult[0] = mmultiplicar(&mat_a, &mat_b, 1);
+        mmult_MATRIZ_SeqC[0] = mmultiplicar(&mat_a, &mat_b, 1);
         end_time = wtime();
         tempo_MATRIZ_SeqC += end_time - start_time;
         //mimprimir(mmult[0]);
@@ -121,7 +129,7 @@ int main(int argc, char *argv[])
     
     sprintf(filename, "MATRIZ_SeqC.result");
     fmat = fopen(filename,"w");
-    fileout_matriz(mmult[0], fmat);
+    fileout_matriz(mmult_MATRIZ_SeqC[0], fmat);
     fclose(fmat);
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -129,15 +137,16 @@ int main(int argc, char *argv[])
     // Multiplicação Sequencial em Bloco
     /*
 	DEFINIR N (numero de pedacos entre 2 e 20)
-LOOP (10x)
+    LOOP (10x)
 
-	MARCAR_TEMPO INICIO
-	PARTICIONAR_MATRIZ em N pedacos
-	MATRIZ_SeqBlC = MULTIPLICARBLOCOS MATRIZ_A x MATRIZ_B
-	MARCAR_TEMPO FIM
-	GRAVAR_DISCO MATRIZ_SeqBlC*/
+        MARCAR_TEMPO INICIO
+        PARTICIONAR_MATRIZ em N pedacos
+        MATRIZ_SeqBlC = MULTIPLICARBLOCOS MATRIZ_A x MATRIZ_B
+        MARCAR_TEMPO FIM
+        GRAVAR_DISCO MATRIZ_SeqBlC
+    */
     for(int count = 0; count < count_for; count++){
-        mmultbloco = (mymatriz **) malloc (sizeof(mymatriz *));
+        mmult_MATRIZ_SeqBlC = (mymatriz **) malloc (sizeof(mymatriz *));
         //printf("\n ##### multiplicar_t1 de Matrizes #####\n");
         start_time = wtime();
 
@@ -147,7 +156,7 @@ LOOP (10x)
 
         multiplicar_submatriz (Vsubmat_a[0], Vsubmat_b[0], Vsubmat_c[0]);
         multiplicar_submatriz (Vsubmat_a[1], Vsubmat_b[1], Vsubmat_c[1]);
-        mmultbloco[0] = msomar(Vsubmat_c[0]->matriz, Vsubmat_c[1]->matriz, 1);
+        mmult_MATRIZ_SeqBlC[0] = msomar(Vsubmat_c[0]->matriz, Vsubmat_c[1]->matriz, 1);
 
         end_time = wtime();
         tempo_MATRIZ_SeqBlC += end_time - start_time;
@@ -157,7 +166,7 @@ LOOP (10x)
     
 	sprintf(filename, "MATRIZ_SeqBlC.result");
 	fmat = fopen(filename,"w");
-	fileout_matriz(mmultbloco[0], fmat);
+	fileout_matriz(mmult_MATRIZ_SeqBlC[0], fmat);
 	fclose(fmat);
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -165,13 +174,15 @@ LOOP (10x)
 
     // Multiplicação MultiThread
     /*
- LOOP (10x)
-        MARCAR_TEMPO INICIO
-	MATRIZ_SeqC = MULTIPLICARMULTITHREADS MATRIZ_A x MATRIZ_B
-	MARCAR_TEMPO FIM
-	GRAVAR_DISCO MATRIZ_ThreadC
+    LOOP (10x)
+            MARCAR_TEMPO INICIO
+        MATRIZ_SeqC = MULTIPLICARMULTITHREADS MATRIZ_A x MATRIZ_B
+        MARCAR_TEMPO FIM
+        GRAVAR_DISCO MATRIZ_ThreadC
     */
     for(int count = 0; count < count_for; count++){
+        threads = (pthread_t *) malloc(ntasks * sizeof(pthread_t));
+        args = (param_t *) malloc(ntasks * sizeof(param_t));
         start_time = wtime();
         for (int i = 0; i < ntasks; i++)
         {
@@ -201,6 +212,27 @@ LOOP (10x)
 	MARCAR_TEMPO FIM
 	GRAVAR_DISCO MATRIZ_ThreadBlC
     */
+   for(int count = 0; count < count_for; count++){
+        threads = (pthread_t *) malloc(ntasks * sizeof(pthread_t));
+        args = (param_t *) malloc(ntasks * sizeof(param_t));
+        start_time = wtime();
+        for (int i = 0; i < ntasks; i++)
+        {
+            args[i].tid = i;
+            args[i].ntasks = ntasks;
+            pthread_create(&threads[i], NULL, exec_thread, (void *) (args+i));
+        }
+
+        for (int i = 0; i < ntasks; i++)
+        {
+            pthread_join(threads[i], NULL);
+        }
+        end_time = wtime();
+        MATRIZ_ThreadBlC += end_time - start_time;
+        printf("\tRuntime : %f\n", end_time - start_time);
+    }
+
+
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
     // Comparar resultados e tempos
@@ -215,9 +247,14 @@ LOOP (10x)
     (print) SPEEDUP (MATRIZ_C)
     (print) SPEEDUP (MATRIZ_BLC)
     */
-    printf("\tRuntime Médio tempo_MATRIZ_SeqC: %f\n", tempo_MATRIZ_SeqC / count_for);
+   printf("\n\t(print) COMPARAR MATRIZ_SeqC c/ MATRIZ_SeqBlC\n\t");
+    mcomparar (mmult_MATRIZ_SeqC[0],mmult_MATRIZ_SeqBlC[0]);
+
+    printf("\n\tRuntime Médio tempo_MATRIZ_SeqC: %f\n", tempo_MATRIZ_SeqC / count_for);
     printf("\tRuntime Médio tempo_MATRIZ_SeqBlC: %f\n", tempo_MATRIZ_SeqBlC / count_for);
     printf("\tRuntime Médio MATRIZ_ThreadC: %f\n", MATRIZ_ThreadC / count_for);
+    printf("\tRuntime Médio MATRIZ_ThreadC: %f\n", MATRIZ_ThreadBlC / count_for);
+    
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
 
     // LIBERAR MEMÓRIA
@@ -228,15 +265,15 @@ LOOP (10x)
 
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
     //                   Liberação de memória
-    mliberar(mmult[0]);
-    free(mmult[0]);
-    mliberar(mmultbloco[0]);
-    free(mmultbloco[0]);
+    mliberar(mmult_MATRIZ_SeqC[0]);
+    free(mmult_MATRIZ_SeqC[0]);
+    mliberar(mmult_MATRIZ_SeqBlC[0]);
+    free(mmult_MATRIZ_SeqBlC[0]);
 
     mliberar(&mat_a);
     mliberar(&mat_b);
-    free(mmult);
-    free(mmultbloco);
+    free(mmult_MATRIZ_SeqC);
+    free(mmult_MATRIZ_SeqBlC);
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
     return 0;
 }
