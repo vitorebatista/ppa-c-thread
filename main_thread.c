@@ -12,7 +12,7 @@ void *exec_thread(void *arg)
     param_t *p = (param_t *)arg;
 
     //sleep(p->ntasks - p->tid);
-    printf("(exec_thread) %d\n", p->tid);
+    //printf("(exec_thread) %d\n", p->tid);
     return NULL;
 }
 
@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
         end_time = wtime();
         tempo_MATRIZ_SeqC += end_time - start_time;
         //mimprimir(mmult[0]);
-        printf("\tRuntime: %f\n", end_time - start_time);
+        //printf("\tRuntime: %f\n", end_time - start_time);
     }
 
     sprintf(filename, "MATRIZ_SeqC.result");
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
         end_time = wtime();
         tempo_MATRIZ_SeqBlC += end_time - start_time;
         //mimprimir(mmultbloco[0]);
-        printf("\tRuntime : %f\n", end_time - start_time);
+        //printf("\tRuntime : %f\n", end_time - start_time);
     }
 
     sprintf(filename, "MATRIZ_SeqBlC.result");
@@ -201,7 +201,7 @@ int main(int argc, char *argv[])
         }
         end_time = wtime();
         MATRIZ_ThreadC += end_time - start_time;
-        printf("\tRuntime : %f\n", end_time - start_time);
+        //printf("\tRuntime : %f\n", end_time - start_time);
     }
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
         }
         end_time = wtime();
         MATRIZ_ThreadBlC += end_time - start_time;
-        printf("\tRuntime : %f\n", end_time - start_time);
+        //printf("\tRuntime : %f\n", end_time - start_time);
     }
 
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
