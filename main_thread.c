@@ -7,7 +7,12 @@ typedef struct
     int ntasks;
 } param_t;
 
-void *exec_thread(void *arg)
+void *exec_multi_thread(void *arg)
+{
+    return NULL
+}
+
+void *exec_multi_thread_blocos(void *arg)
 {
     param_t *p = (param_t *)arg;
 
@@ -113,14 +118,14 @@ int main(int argc, char *argv[])
         MATRIZ_SeqC = MULTIPLICAR MATRIZ_A x MATRIZ_B
         MARCAR_TEMPO FIM
         GRAVAR_DISCO MATRIZ_SeqC*/
-
+    mmult_MATRIZ_SeqC = (mymatriz **)malloc(sizeof(mymatriz *));
     for (int count = 0; count < count_for; count++)
     {
         // mliberar(mmult[0]);
         // free(mmult[0]);
         // free(mmult);
         // free(mmultbloco);
-        mmult_MATRIZ_SeqC = (mymatriz **)malloc(sizeof(mymatriz *));
+        
         start_time = wtime();
         mmult_MATRIZ_SeqC[0] = mmultiplicar(&mat_a, &mat_b, 1);
         end_time = wtime();
@@ -147,9 +152,10 @@ int main(int argc, char *argv[])
         MARCAR_TEMPO FIM
         GRAVAR_DISCO MATRIZ_SeqBlC
     */
+    mmult_MATRIZ_SeqBlC = (mymatriz **)malloc(sizeof(mymatriz *));
     for (int count = 0; count < count_for; count++)
     {
-        mmult_MATRIZ_SeqBlC = (mymatriz **)malloc(sizeof(mymatriz *));
+        
         //printf("\n ##### multiplicar_t1 de Matrizes #####\n");
         start_time = wtime();
 
@@ -192,7 +198,7 @@ int main(int argc, char *argv[])
         {
             args[i].tid = i;
             args[i].ntasks = ntasks;
-            pthread_create(&threads[i], NULL, exec_thread, (void *)(args + i));
+            pthread_create(&threads[i], NULL, exec_multi_thread, (void *)(args + i));
         }
 
         for (int i = 0; i < ntasks; i++)
@@ -225,7 +231,7 @@ int main(int argc, char *argv[])
         {
             args[i].tid = i;
             args[i].ntasks = ntasks;
-            pthread_create(&threads[i], NULL, exec_thread, (void *)(args + i));
+            pthread_create(&threads[i], NULL, exec_multi_thread_blocos, (void *)(args + i));
         }
 
         for (int i = 0; i < ntasks; i++)
