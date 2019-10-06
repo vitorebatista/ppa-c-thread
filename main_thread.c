@@ -302,12 +302,16 @@ int main(int argc, char *argv[])
 
     free(mmult_MATRIZ_SeqC[0]);
     free(mmult_MATRIZ_SeqBlC[0]);
+    free(mmult_MATRIZ_ThreadC[0]);
+    free(mmult_MATRIZ_ThreadBlC[0]);
 
     mliberar(&mat_a);
     mliberar(&mat_b);
 
     free(mmult_MATRIZ_SeqC);
     free(mmult_MATRIZ_SeqBlC);
+    free(mmult_MATRIZ_ThreadC);
+    free(mmult_MATRIZ_ThreadBlC);
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
     return 0;
 }
