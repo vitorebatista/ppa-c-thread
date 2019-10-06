@@ -9,7 +9,7 @@ typedef struct
 
 void *exec_multi_thread(void *arg)
 {
-    return NULL
+    return NULL;
 }
 
 void *exec_multi_thread_blocos(void *arg)
