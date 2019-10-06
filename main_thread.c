@@ -29,6 +29,8 @@ int main(int argc, char *argv[])
     mymatriz mat_a, mat_b;
     mymatriz **mmult_MATRIZ_SeqC;
     mymatriz **mmult_MATRIZ_SeqBlC;
+    mymatriz **mmult_MATRIZ_ThreadC;
+    mymatriz **mmult_MATRIZ_ThreadBlC;
 
     char filename[100];
     FILE *fmat;
