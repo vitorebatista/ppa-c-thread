@@ -191,6 +191,8 @@ int main(int argc, char *argv[])
         MARCAR_TEMPO FIM
         GRAVAR_DISCO MATRIZ_ThreadC
     */
+   //TODO
+   mmult_MATRIZ_ThreadC = (mymatriz **)malloc(sizeof(mymatriz *));
     for (int count = 0; count < count_for; count++)
     {
         threads = (pthread_t *)malloc(ntasks * sizeof(pthread_t));
@@ -224,6 +226,8 @@ int main(int argc, char *argv[])
 	MARCAR_TEMPO FIM
 	GRAVAR_DISCO MATRIZ_ThreadBlC
     */
+   //TODO
+   mmult_MATRIZ_ThreadBlC = (mymatriz **)malloc(sizeof(mymatriz *));
     for (int count = 0; count < count_for; count++)
     {
         threads = (pthread_t *)malloc(ntasks * sizeof(pthread_t));
@@ -263,15 +267,22 @@ int main(int argc, char *argv[])
     mcomparar(mmult_MATRIZ_SeqC[0], mmult_MATRIZ_SeqBlC[0]);
 
     printf("\n\t(print) COMPARAR MATRIZ_SeqC c/ MATRIZ_ThreadC\n\t");
+    //TODO
     //mcomparar(mmult_MATRIZ_SeqC[0], mmult_MATRIZ_ThreadC[0]);
 
     printf("\n\t(print) COMPARAR MATRIZ_SeqC c/ MATRIZ_ThreadBlC\n\t");
+    //TODO
     //mcomparar(mmult_MATRIZ_SeqC[0], mmult_MATRIZ_ThreadBlC[0]);
 
     printf("\n\tRuntime Médio tempo_MATRIZ_SeqC: %f\n", tempo_MATRIZ_SeqC / count_for);
     printf("\tRuntime Médio tempo_MATRIZ_SeqBlC: %f\n", tempo_MATRIZ_SeqBlC / count_for);
     printf("\tRuntime Médio MATRIZ_ThreadC: %f\n", MATRIZ_ThreadC / count_for);
-    printf("\tRuntime Médio MATRIZ_ThreadC: %f\n", MATRIZ_ThreadBlC / count_for);
+    printf("\tRuntime Médio MATRIZ_ThreadBlC: %f\n", MATRIZ_ThreadBlC / count_for);
+
+    printf("\n\tSPEEDUP (MATRIZ_C)\n\t");
+    //TODO
+    printf("\n\tSPEEDUP (MATRIZ_BLC)\n\t");
+    //TODO
 
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -283,13 +294,18 @@ int main(int argc, char *argv[])
 
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
     //                   Liberação de memória
+    //TODO limpar todos os vetores
     mliberar(mmult_MATRIZ_SeqC[0]);
-    free(mmult_MATRIZ_SeqC[0]);
     mliberar(mmult_MATRIZ_SeqBlC[0]);
+    //mliberar(mmult_MATRIZ_ThreadC[0]);
+    //mliberar(mmult_MATRIZ_ThreadBlC[0]);
+
+    free(mmult_MATRIZ_SeqC[0]);
     free(mmult_MATRIZ_SeqBlC[0]);
 
     mliberar(&mat_a);
     mliberar(&mat_b);
+
     free(mmult_MATRIZ_SeqC);
     free(mmult_MATRIZ_SeqBlC);
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
