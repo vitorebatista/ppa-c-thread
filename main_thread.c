@@ -5,10 +5,17 @@ typedef struct
 {
     int tid;
     int ntasks;
+    // :(
+    mymatriz *mat_a;
+    mymatriz *mat_b;
+    mymatriz *mat_c;
 } param_t;
 
 void *exec_multi_thread(void *arg)
 {
+    printf("exec_multi_thread");
+    param_t *p = (param_t *)arg;
+    //multiplicarTh(p->mat_a, p->mat_b, p->mat_c, p->tid, p->ntasks);
     return NULL;
 }
 
@@ -202,6 +209,9 @@ int main(int argc, char *argv[])
         {
             args[i].tid = i;
             args[i].ntasks = ntasks;
+            args[i].mat_a = &mat_a;
+            args[i].mat_b = &mat_b;
+            args[i].mat_c = *mmult_MATRIZ_ThreadC;
             pthread_create(&threads[i], NULL, exec_multi_thread, (void *)(args + i));
         }
 
