@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "toolsv3.h"
 #include "matrizv3.h"
 #include "matriz-operacoesv3.h"
