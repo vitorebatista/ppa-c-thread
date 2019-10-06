@@ -262,6 +262,12 @@ int main(int argc, char *argv[])
     printf("\n\t(print) COMPARAR MATRIZ_SeqC c/ MATRIZ_SeqBlC\n\t");
     mcomparar(mmult_MATRIZ_SeqC[0], mmult_MATRIZ_SeqBlC[0]);
 
+    printf("\n\t(print) COMPARAR MATRIZ_SeqC c/ MATRIZ_ThreadC\n\t");
+    //mcomparar(mmult_MATRIZ_SeqC[0], mmult_MATRIZ_ThreadC[0]);
+
+    printf("\n\t(print) COMPARAR MATRIZ_SeqC c/ MATRIZ_ThreadBlC\n\t");
+    //mcomparar(mmult_MATRIZ_SeqC[0], mmult_MATRIZ_ThreadBlC[0]);
+
     printf("\n\tRuntime Médio tempo_MATRIZ_SeqC: %f\n", tempo_MATRIZ_SeqC / count_for);
     printf("\tRuntime Médio tempo_MATRIZ_SeqBlC: %f\n", tempo_MATRIZ_SeqBlC / count_for);
     printf("\tRuntime Médio MATRIZ_ThreadC: %f\n", MATRIZ_ThreadC / count_for);
