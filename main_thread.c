@@ -1,4 +1,9 @@
 #include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+#include "matrizv3.h"
 #include "matriz-operacoes-threads.h"
 
 typedef struct
@@ -15,7 +20,25 @@ void *exec_multi_thread(void *arg)
 {
     printf("exec_multi_thread");
     param_t *p = (param_t *)arg;
-    //multiplicarTh(p->mat_a, p->mat_b, p->mat_c, p->tid, p->ntasks);
+
+    //Não sei o motivo de dar erro ao descomentar essa função...
+    //multiplicarTh(p->mat_b, p->mat_b, p->mat_b, p->tid, p->ntasks);
+    printf("(exec_thread) %d\n", p->tid);
+      int i_max = p->mat_a->lin;
+    int j_max = p->mat_b->col;
+    int k_max = p->mat_a->col; //ou mat_b->lin
+    printf("vai entrarfor\n");
+    for (int i = p->tid; i < i_max; i += p->ntasks)
+    {
+        printf("for %d\n",p->tid);
+        for (int j = 0; j < j_max; j++)
+        {
+            for (int k = 0; k < k_max; k++)
+            {
+                p->mat_c->matriz[i][j] += p->mat_a->matriz[i][k] * p->mat_b->matriz[k][j];
+            }
+        }
+    }
     return NULL;
 }
 
@@ -24,7 +47,7 @@ void *exec_multi_thread_blocos(void *arg)
     param_t *p = (param_t *)arg;
 
     //sleep(p->ntasks - p->tid);
-    //printf("(exec_thread) %d\n", p->tid);
+    printf("(exec_thread) %d\n", p->tid);
     return NULL;
 }
 
