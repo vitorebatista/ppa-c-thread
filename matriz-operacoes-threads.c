@@ -11,13 +11,13 @@ int multiplicarTh(mymatriz *mat_a, mymatriz *mat_b, mymatriz *mat_c, int tid, in
 
     for (int i = tid; i < i_max; i += ntasks)
     {
-        printf("\nfor tid\n");
-        for (int j = 0; j < j_max; j++)
+        //printf("\nfor tid\n");
+        for (int k = 0; k < k_max; k++)
         {
-            for (int k = 0; k < k_max; k++)
+            for (int j = 0; j < j_max; j++)
             {
-                printf("\nfor k\n");
-                //mat_c->matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                //printf("\nfor k\n");
+                mat_c->matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
                 //printf("mat_c->matriz[%d][%d] = %d, calculado por thread %d\n", i, j, mat_c->matriz[i][j], tid);
             }
         }

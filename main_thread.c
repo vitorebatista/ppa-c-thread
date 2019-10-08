@@ -21,10 +21,7 @@ typedef struct
 
 void *exec_multi_thread(void *arg)
 {
-    printf("exec_multi_thread");
     param_t *p = (param_t *)arg;
-
-    //Não sei o motivo de dar erro ao descomentar essa função...
     multiplicarTh(p->mat_a, p->mat_b, p->mat_c, p->tid, p->ntasks);
     
     return NULL;
@@ -36,7 +33,7 @@ void *exec_multi_thread_blocos(void *arg)
 
     //sleep(p->ntasks - p->tid);
     multiplicarThblocos(p->mat_suba, p->mat_subb, p->mat_subc);
-    printf("(exec_thread) %d\n", p->tid);
+    //printf("(exec_thread) %d\n", p->tid);
     return NULL;
 }
 
@@ -65,7 +62,7 @@ int main(int argc, char *argv[])
 
     //For para executar calculo da média
     int ntasks = 2;
-    int count_for = 10;
+    int count_for = 1;
     param_t *args;
     pthread_t *threads;
 
@@ -146,7 +143,7 @@ int main(int argc, char *argv[])
         // free(mmult[0]);
         // free(mmult);
         // free(mmultbloco);
-        
+        mzerar(mmult_MATRIZ_SeqC[0]);
         start_time = wtime();
         mmult_MATRIZ_SeqC[0] = mmultiplicar(&mat_a, &mat_b, 1);
         end_time = wtime();
@@ -176,7 +173,7 @@ int main(int argc, char *argv[])
     mmult_MATRIZ_SeqBlC = (mymatriz **)malloc(sizeof(mymatriz *));
     for (int count = 0; count < count_for; count++)
     {
-        
+        mzerar(mmult_MATRIZ_SeqBlC[0]);
         //printf("\n ##### multiplicar_t1 de Matrizes #####\n");
         start_time = wtime();
 
@@ -211,9 +208,16 @@ int main(int argc, char *argv[])
         GRAVAR_DISCO MATRIZ_ThreadC
     */
    //TODO
-   mmult_MATRIZ_ThreadC = (mymatriz **)malloc(sizeof(mymatriz *));
+    mmult_MATRIZ_ThreadC = (mymatriz **)malloc(sizeof(mymatriz *));
+    mmult_MATRIZ_ThreadC[0] = malloc(sizeof(mymatriz));
+    mmult_MATRIZ_ThreadC[0]->matriz = NULL;
+    mmult_MATRIZ_ThreadC[0]->lin = mat_a.lin;
+    mmult_MATRIZ_ThreadC[0]->col = mat_b.col;
+    malocar(mmult_MATRIZ_ThreadC[0]);
+    
     for (int count = 0; count < count_for; count++)
     {
+        mzerar(mmult_MATRIZ_ThreadC[0]);
         threads = (pthread_t *)malloc(ntasks * sizeof(pthread_t));
         args = (param_t *)malloc(ntasks * sizeof(param_t));
         start_time = wtime();
@@ -223,7 +227,7 @@ int main(int argc, char *argv[])
             args[i].ntasks = ntasks;
             args[i].mat_a = &mat_a;
             args[i].mat_b = &mat_b;
-            args[i].mat_c = *mmult_MATRIZ_ThreadC;
+            args[i].mat_c = mmult_MATRIZ_ThreadC[0];
             pthread_create(&threads[i], NULL, exec_multi_thread, (void *)(args + i));
         }
 
@@ -235,6 +239,10 @@ int main(int argc, char *argv[])
         MATRIZ_ThreadC += end_time - start_time;
         //printf("\tRuntime : %f\n", end_time - start_time);
     }
+    sprintf(filename, "MATRIZ_ThreadC.result");
+    fmat = fopen(filename, "w");
+    fileout_matriz(mmult_MATRIZ_ThreadC[0], fmat);
+    fclose(fmat);
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
@@ -297,16 +305,16 @@ int main(int argc, char *argv[])
 
     printf("\n\t(print) COMPARAR MATRIZ_SeqC c/ MATRIZ_ThreadC\n\t");
     //TODO
-    //mcomparar(mmult_MATRIZ_SeqC[0], mmult_MATRIZ_ThreadC[0]);
+    mcomparar(mmult_MATRIZ_SeqC[0], mmult_MATRIZ_ThreadC[0]);
 
     printf("\n\t(print) COMPARAR MATRIZ_SeqC c/ MATRIZ_ThreadBlC\n\t");
     //TODO
     //mcomparar(mmult_MATRIZ_SeqC[0], mmult_MATRIZ_ThreadBlC[0]);
 
-    printf("\n\tRuntime Médio tempo_MATRIZ_SeqC: %f\n", tempo_MATRIZ_SeqC / count_for);
-    printf("\tRuntime Médio tempo_MATRIZ_SeqBlC: %f\n", tempo_MATRIZ_SeqBlC / count_for);
-    printf("\tRuntime Médio MATRIZ_ThreadC: %f\n", MATRIZ_ThreadC / count_for);
-    printf("\tRuntime Médio MATRIZ_ThreadBlC: %f\n", MATRIZ_ThreadBlC / count_for);
+    printf("\n\tRuntime Médio tempo_MATRIZ_SeqC: \t%f\n", tempo_MATRIZ_SeqC / count_for);
+    printf("\tRuntime Médio tempo_MATRIZ_SeqBlC: \t%f\n", tempo_MATRIZ_SeqBlC / count_for);
+    printf("\tRuntime Médio MATRIZ_ThreadC: \t\t%f\n", MATRIZ_ThreadC / count_for);
+    printf("\tRuntime Médio MATRIZ_ThreadBlC: \t%f\n", MATRIZ_ThreadBlC / count_for);
 
     printf("\n\tSPEEDUP (MATRIZ_C)\n\t");
     //TODO
@@ -326,7 +334,7 @@ int main(int argc, char *argv[])
     //TODO limpar todos os vetores
     mliberar(mmult_MATRIZ_SeqC[0]);
     mliberar(mmult_MATRIZ_SeqBlC[0]);
-    //mliberar(mmult_MATRIZ_ThreadC[0]);
+    mliberar(mmult_MATRIZ_ThreadC[0]);
     //mliberar(mmult_MATRIZ_ThreadBlC[0]);
 
     free(mmult_MATRIZ_SeqC[0]);
