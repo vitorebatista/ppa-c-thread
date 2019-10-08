@@ -14,6 +14,9 @@ typedef struct
     mymatriz *mat_a;
     mymatriz *mat_b;
     mymatriz *mat_c;
+    matriz_bloco_t *mat_suba;
+    matriz_bloco_t *mat_subb;
+    matriz_bloco_t *mat_subc;
 } param_t;
 
 void *exec_multi_thread(void *arg)
@@ -22,23 +25,8 @@ void *exec_multi_thread(void *arg)
     param_t *p = (param_t *)arg;
 
     //Não sei o motivo de dar erro ao descomentar essa função...
-    //multiplicarTh(p->mat_b, p->mat_b, p->mat_b, p->tid, p->ntasks);
-    printf("(exec_thread) %d\n", p->tid);
-      int i_max = p->mat_a->lin;
-    int j_max = p->mat_b->col;
-    int k_max = p->mat_a->col; //ou mat_b->lin
-    printf("vai entrarfor\n");
-    for (int i = p->tid; i < i_max; i += p->ntasks)
-    {
-        printf("for %d\n",p->tid);
-        for (int j = 0; j < j_max; j++)
-        {
-            for (int k = 0; k < k_max; k++)
-            {
-                p->mat_c->matriz[i][j] += p->mat_a->matriz[i][k] * p->mat_b->matriz[k][j];
-            }
-        }
-    }
+    multiplicarTh(p->mat_a, p->mat_b, p->mat_c, p->tid, p->ntasks);
+    
     return NULL;
 }
 
@@ -47,6 +35,7 @@ void *exec_multi_thread_blocos(void *arg)
     param_t *p = (param_t *)arg;
 
     //sleep(p->ntasks - p->tid);
+    multiplicarThblocos(p->mat_suba, p->mat_subb, p->mat_subc);
     printf("(exec_thread) %d\n", p->tid);
     return NULL;
 }
@@ -268,8 +257,15 @@ int main(int argc, char *argv[])
         start_time = wtime();
         for (int i = 0; i < ntasks; i++)
         {
+            Vsubmat_a = particionar_matriz(mat_a.matriz, N, La, 1, 2);
+            Vsubmat_b = particionar_matriz(mat_b.matriz, Lb, M, 0, 2);
+            Vsubmat_c = csubmatrizv2(N, M, nro_submatrizes);
+
             args[i].tid = i;
             args[i].ntasks = ntasks;
+            args[i].mat_suba = *Vsubmat_a;
+            args[i].mat_subb = *Vsubmat_b;
+            args[i].mat_subc = *Vsubmat_c;
             pthread_create(&threads[i], NULL, exec_multi_thread_blocos, (void *)(args + i));
         }
 

@@ -3,7 +3,7 @@
 
 CC = gcc
 CCFLAGS = -Wall -O3
-LDFLAGS =
+LDFLAGS = -pthread
 TARGET = main_thread gmat help
 
 all: $(TARGET)
@@ -14,8 +14,8 @@ all: $(TARGET)
 %: %.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
-main_thread: main_thread.c matrizv3.o toolsv3.o matriz-operacoesv3.o
-			$(CC) $(CCFLAGS) matriz-operacoesv3.o matrizv3.o toolsv3.o main_thread.c -o $@ $(LDFLAGS)
+main_thread: main_thread.c matrizv3.o toolsv3.o matriz-operacoesv3.o matriz-operacoes-threads.o
+			$(CC) $(CCFLAGS) matriz-operacoesv3.o matrizv3.o toolsv3.o matriz-operacoes-threads.o main_thread.c -o $@ $(LDFLAGS)
 
 gmat: matrizv3.o toolsv3.o gera_matrizv3.c
 		$(CC) $(CCFLAGS) matrizv3.o toolsv3.o gera_matrizv3.c -o $@ $(LDFLAGS)
