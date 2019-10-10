@@ -1,93 +1,90 @@
-#include "toolsv3.h"
 #include "matrizv3.h"
+#include "toolsv3.h"
 
 /*
-Realiza a soma de duas matrizes.
-As matrizes devem ter o mesmo número de linhas e colunas, sendo o
-resultado uma nova matriz de mesmo tamanho.
+function msomar
+Realiza operação para duas matrizes.
+As matrizes envolvidas na adição devem ser da mesma ordem, quer dizer, devem ter o mesmo
+número de linhas e colunas. A matriz resultante terá a mesma configuração.
 @return res, ponteiro para a matriz resultante
-@param mat_a, ponteiro da struct mymatriz
-@param mat_b, ponteiro da struct mymatriz
-@param tipo, ordem para executar a somatória:
-        - 0 para ij
-        - 1 para ji
+@param mat_a, ponteiro para objeto do tipo mymatriz
+@param mat_b, ponteiro para objeto do tipo mymatriz
+@param tipo, inteiro que define a ordem de aninhamento dos loops:
+             - 0 para ij
+             - 1 para ji
 */
-mymatriz *msomar(mymatriz *mat_a, mymatriz *mat_b, int tipo)
-{
-    mymatriz *result = malloc(sizeof(mymatriz));
-    int i_max, j_max;
+mymatriz *msomar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
+    mymatriz *res = malloc(sizeof(mymatriz));
+    int i_max, j_max; //auxiliares para controle de aninhamento
 
-    if (mat_a->matriz == NULL)
-    {
-        printf("\nERRO: Matriz A não alocada \n\n");
-        exit(1);
+    //verifica se foi alocado memória para a matriz
+    if ( (mat_a == NULL) || (mat_b == NULL)) {
+        printf ("** Erro: Memoria Insuficiente **\n");
+        return NULL;
     }
 
-    if (mat_b->matriz == NULL)
-    {
-        printf("\nERRO: Matriz B não alocada \n\n");
-        exit(1);
+    //valida se matrizes tem tamanhos compatíveis
+    if (mat_a->col != mat_b->col || mat_a->lin != mat_b->lin ){
+        printf ("** Erro: Matrizes devem ter mesma configuração para que se possa somar. **\n");
+        return NULL;
     }
 
-    if ((mat_a->lin != mat_b->lin) || (mat_a->col != mat_b->col))
-    {
-        printf("\nERRO: As matrizes não são do mesmo tamanho\n");
-        exit(1);
-    }
+    //matriz resultado
+	res->matriz = NULL;
+	res->lin = mat_a->lin;
+	res->col = mat_a->col;
 
-    result->matriz = NULL;
-    result->col = mat_a->col;
-    result->lin = mat_a->lin;
-
-    if (malocar(result))
-    {
-        printf("\nERROR: Erro ao inicializar matriz\n");
-        exit(1);
-    }
-    else
-    {
-        mzerar(result);
+    //realiza a alocação de memória para matriz resultado
+    if (malocar(res)) {
+	printf ("ERROR: Out of memory\n");
+	exit(1);
+    }else{
+        mzerar(res);
     }
 
     //define aninhamento, conforme parametro tipo
     i_max = mat_a->lin;
     j_max = mat_a->col;
-    if (tipo == 1)
-    { //tipo = 1: ordem de aninhamento ji
+    if (tipo == 1){ //tipo = 1: ordem de aninhamento ji
         i_max = mat_a->col;
         j_max = mat_a->lin;
     }
-
+    
     //realiza a soma dos elementos da matriz a e b
-    for (int i = 0; i < i_max; i++)
-    {
-        for (int j = 0; j < j_max; j++)
-        {
-            if (tipo == 0)
-            { //tipo = 0: ordem de aninhamento ij
-                result->matriz[i][j] = mat_a->matriz[i][j] + mat_b->matriz[i][j];
-            }
-            else
-            { //tipo = 1: ordem de aninhamento ji
-                result->matriz[j][i] = mat_a->matriz[j][i] + mat_b->matriz[j][i];
+    for (int i = 0; i < i_max; i++){
+        for (int j = 0; j < j_max; j++){
+
+            
+            if (tipo == 0){ //tipo = 0: ordem de aninhamento ij
+                //printf("[a] %d ", mat_a->matriz[i][j] );
+                //printf("[b] %d ", mat_b->matriz[i][j]);
+                res->matriz[i][j] = mat_a->matriz[i][j] + mat_b->matriz[i][j];
+                //printf("[r] %d\n", res.matriz[i][j]);
+
+            }else{ //tipo = 1: ordem de aninhamento ji
+                //printf("[a] %d ", mat_a->matriz[i][j] );
+                //printf("[b] %d ", mat_b->matriz[i][j]);
+                res->matriz[j][i] = mat_a->matriz[j][i] + mat_b->matriz[j][i];
+                //printf("[r] %d\n", res.matriz[i][j]);
+
             }
         }
     }
-    // result->matriz = temp.matriz;
-    // result->lin = temp.lin;
-    // result->col = temp.col;
-    return result;
+    
+    return res;
 }
 
+
 /*
-Realiza a multiplicação de duas matrizes.
+function mmultiplicar
+Realiza operação de multiplicação para duas matrizes.
 As matrizes envolvidas na multiplicação devem seguir a regra: número de colunas da primeira
 matriz deve ser igual ao número de linhas da segunda matriz. A matriz resultante será configurada
 tendo o número de linhas da primeira e o número de colunas da segunda. Ex: 3x4 * 4x3 = 3x3
 @return res, ponteiro para a matriz resultante
 @param mat_a, ponteiro para objeto do tipo mymatriz
 @param mat_b, ponteiro para objeto do tipo mymatriz
-@param tipo, ordem para executar a multiplicação:
+@param tipo, inteiro que define a ordem de aninhamento dos loops:
              - 0 para ijk
              - 1 para ikj
              - 2 para kij
@@ -199,6 +196,15 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
 
     return res;
 }
+
+/*
+function multiplicar_submatriz
+Multiplica a mat_suba pela mat_subb atribuindo o resultado a mat_subc.
+@return matriz_bloco, ponteiro para estrutura matriz_bloco_t
+@param mat_suba, ponteiro para matriz_bloco_t (matriz 1)
+@param mat_subb, ponteiro para matriz_bloco_t (matriz 2)
+@param mat_subc, ponteiro para matriz_bloco_t (resultado)
+*/
 int multiplicar_submatriz(matriz_bloco_t *mat_suba, matriz_bloco_t *mat_subb, matriz_bloco_t *mat_subc)
 {
 
@@ -222,6 +228,17 @@ int multiplicar_submatriz(matriz_bloco_t *mat_suba, matriz_bloco_t *mat_subb, ma
     return 0;
 }
 
+/*
+function particionar_matriz
+Particiona uma matriz em blocos, para poder operar a multiplicação em blocos.
+@return matriz_bloco, ponteiro para estrutura matriz_bloco_t
+@param matriz, ponteiro para matriz de inteiros que se deseja quebrar em blocos
+@param mat_lin, número de linhas da matriz
+@param mat_col, número de colunas da matriz
+@param orientacao, 0 para corte horizontal, em linhas
+                   1 para corte vertical, em colunas
+@param divisor, número de blocos em que se deseja quebrar a matriz
+*/
 matriz_bloco_t **particionar_matriz(int **matriz, int mat_lin, int mat_col, int orientacao, int divisor)
 {
     matriz_bloco_t **matriz_bloco = NULL;
@@ -290,6 +307,15 @@ matriz_bloco_t **particionar_matriz(int **matriz, int mat_lin, int mat_col, int 
     return matriz_bloco;
 }
 
+/*
+function csubmatrizv2
+Aloca espaço para o bloco de matriz resultado, seguindo as definições do tamanho para matriz
+resultante da mutiplicação.
+@return matriz_bloco, ponteiro para estrutura matriz_bloco_t
+@param mat_lin, número de linhas da matriz resultante
+@param mat_col, número de colunas da matriz resultante
+@param divisor, número de blocos para quebra da matriz
+*/
 matriz_bloco_t **csubmatrizv2(int mat_lin, int mat_col, int divisor)
 {
     matriz_bloco_t **matriz_bloco = NULL;
