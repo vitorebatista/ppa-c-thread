@@ -11,9 +11,9 @@ jobs:
     - uses: actions/checkout@v1
     - name: make
       run: make
-    - name: Create a 100x50 matrix 
-      run: ./gmat 100 50
-    - name: Create a 50x100 matrix 
-      run: ./gmat 50 100
+    - name: Create a 1000x500 matrix 
+      run: ./gmat 1000 500
+    - name: Create a 500x1000 matrix 
+      run: ./gmat 500 1000
     - name: Execute the main_thread
-      run: ./main_thread 100x50-mat.map 50x100-mat.map 
+      run: ./main_thread 1000x500-mat.map 500x1000-mat.map 
