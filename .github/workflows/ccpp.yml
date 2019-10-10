@@ -1,0 +1,19 @@
+name: C/C++ CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: make
+      run: make
+    - name: Create a 1000x500 matrix 
+      run: ./gmat 1000 500
+    - name: Create a 500x1000 matrix 
+      run: ./gmat 500 1000
+    - name: Execute the main_thread
+      run: ./main_thread 1000x500-mat.map 500x1000-mat.map 
