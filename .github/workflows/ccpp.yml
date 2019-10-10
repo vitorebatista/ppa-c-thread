@@ -1,0 +1,21 @@
+name: C/C++ CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: configure
+      run: ./configure
+    - name: make
+      run: make
+    - name: Create a 100x50 matrix 
+      run: ./gmat 100 50
+    - name: Create a 50x100 matrix 
+      run: ./gmat 50 100
+    - name: Execute the main_thread
+      run: ./main_thread 100x50-mat.map 50x100-mat.map 
