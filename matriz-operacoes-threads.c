@@ -1,9 +1,8 @@
 #include "matrizv3.h"
+#include "matriz-operacoesv3.h"
 
 int multiplicarTh(mymatriz *mat_a, mymatriz *mat_b, mymatriz *mat_c, int tid, int ntasks)
 {
-    printf("\nchamei multiplicharTh\n");
-
     //inicializa variáveis de controle dos for`s
     int i_max = mat_a->lin;
     int j_max = mat_b->col;
@@ -28,5 +27,6 @@ int multiplicarTh(mymatriz *mat_a, mymatriz *mat_b, mymatriz *mat_c, int tid, in
 
 int multiplicarThblocos(matriz_bloco_t *mat_suba, matriz_bloco_t *mat_subb, matriz_bloco_t *mat_subc)
 {
+    multiplicar_submatriz(mat_suba, mat_subb, mat_subc);
     return 0;
 }
