@@ -117,11 +117,13 @@ int main(int argc, char *argv[])
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
-    printf("\rMultiplicação Sequencial...             ");
-    fflush(stdout);
+    // Multiplicação Sequencial
+    
     mmult_MATRIZ_SeqC = (mymatriz **)malloc(sizeof(mymatriz *));
     for (int count = 0; count < count_for; count++)
     {
+        printf("\rMultiplicação Sequencial, teste %d...             ", count+1);
+        fflush(stdout);
         start_time = wtime();
         mmult_MATRIZ_SeqC[0] = mmultiplicar(&mat_a, &mat_b, 1);
         end_time = wtime();
@@ -135,12 +137,12 @@ int main(int argc, char *argv[])
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
-    printf("\rMultiplicação Sequencial em Bloco...");
-    fflush(stdout);
+    // Multiplicação Sequencial em Bloco
     mmult_MATRIZ_SeqBlC = (mymatriz **)malloc(sizeof(mymatriz *));
     for (int count = 0; count < count_for; count++)
     {
-
+        printf("\rMultiplicação Sequencial em Bloco, teste %d...             ", count+1);
+        fflush(stdout);
         Vsubmat_a = particionar_matriz(mat_a.matriz, N, La, 1, nro_submatrizes);
         Vsubmat_b = particionar_matriz(mat_b.matriz, Lb, M, 0, nro_submatrizes);
         Vsubmat_c = csubmatrizv2(N, M, nro_submatrizes);
@@ -170,9 +172,7 @@ int main(int argc, char *argv[])
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
-    //
-    printf("\rMultiplicação MultiThread...             ");
-    fflush(stdout);
+    // Multiplicação MultiThread
     mmult_MATRIZ_ThreadC = (mymatriz **)malloc(sizeof(mymatriz *));
     mmult_MATRIZ_ThreadC[0] = malloc(sizeof(mymatriz));
     mmult_MATRIZ_ThreadC[0]->matriz = NULL;
@@ -192,6 +192,8 @@ int main(int argc, char *argv[])
 
     for (int count = 0; count < count_for; count++)
     {
+        printf("\rMultiplicação MultiThread, teste %d...             ", count+1);
+        fflush(stdout);
         mzerar(mmult_MATRIZ_ThreadC[0]);
         threads = (pthread_t *)malloc(ntasks * sizeof(pthread_t));
         args = (param_t *)malloc(ntasks * sizeof(param_t));
@@ -221,11 +223,12 @@ int main(int argc, char *argv[])
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
-    printf("\rMultiplicação MultiThreads em Bloco...");
-    fflush(stdout);
+    // Multiplicação MultiThreads em Bloco
     mmult_MATRIZ_ThreadBlC = (mymatriz **)malloc(sizeof(mymatriz *));
     for (int count = 0; count < count_for; count++)
     {
+        printf("\rMultiplicação MultiThreads em Bloco, teste %d...             ", count+1);
+        fflush(stdout);
         Vsubmat_a = particionar_matriz(mat_a.matriz, N, La, 1, nro_submatrizes);
         Vsubmat_b = particionar_matriz(mat_b.matriz, Lb, M, 0, nro_submatrizes);
         Vsubmat_c = csubmatrizv2(N, M, nro_submatrizes);
